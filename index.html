@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>掲示板</title>
+</head>
+<body>
+    <h1>スレッド式掲示板</h1>
+
+    <h2>新しいスレッドを作る</h2>
+    <input type="text" id="threadTitle" placeholder="スレッドのタイトル">
+    <button onclick="createThread()">作成</button>
+
+    <h2>スレッド一覧</h2>
+    <div id="threads"></div>
+
+    <script>
+        function loadThreads() {
+            let threads = JSON.parse(localStorage.getItem("threads")) || [];
+            let threadsDiv = document.getElementById("threads");
+            threadsDiv.innerHTML = "";
+
+            threads.forEach((thread, index) => {
+                let div = document.createElement("div");
+                div.innerHTML = `<a href="thread.html?id=${index}">${thread.title}</a>`;
+                threadsDiv.appendChild(div);
+            });
+        }
+
+        function createThread() {
+            let title = document.getElementById("threadTitle").value;
+            if (title) {
+                let threads = JSON.parse(localStorage.getItem("threads")) || [];
+                threads.push({ title: title, posts: [] });
+                localStorage.setItem("threads", JSON.stringify(threads));
+                document.getElementById("threadTitle").value = "";
+                loadThreads();
+            }
+        }
+
+        loadThreads();
+    </script>
+</body>
+</html>
