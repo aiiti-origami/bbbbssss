@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>スレッド</title>
+</head>
+<body>
+    <h1 id="threadTitle">スレッド</h1>
+
+    <h2>投稿</h2>
+    <input type="text" id="name" placeholder="名前">
+    <input type="text" id="message" placeholder="メッセージ">
+    <button onclick="sendPost()">投稿</button>
+
+    <h2>レス一覧</h2>
+    <div id="posts"></div>
+
+    <script>
+        let params = new URLSearchParams(window.location.search);
+        let threadId = params.get("id");
+        let threads = JSON.parse(localStorage.getItem("threads")) || [];
+        let thread = threads[threadId];
+
+        if (thread) {
+            document.getElementById("threadTitle").innerText = thread.title;
+            loadPosts();
+        } else {
+            document.getElementById("threadTitle").innerText = "スレッドが見つかりません";
+        }
+
+        function loadPosts() {
+            let postsDiv = document.getElementById("posts");
+            postsDiv.innerHTML = "";
+
+            thread.posts.forEach(post => {
+                let div = document.createElement("div");
+                div.innerHTML = `<strong>${post.name}</strong>: ${post.message}`;
+                postsDiv.appendChild(div);
+            });
+        }
+
+        function sendPost() {
+            let name = document.getElementById("name").value;
+            let message = document.getElementById("message").value;
+
+            if (name && message) {
+                thread.posts.push({ name: name, message: message });
+                threads[threadId] = thread;
+                localStorage.setItem("threads", JSON.stringify(threads));
+                document.getElementById("message").value = "";
+                loadPosts();
+            }
+        }
+    </script>
+</body>
+</html>
